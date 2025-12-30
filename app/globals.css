@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(40px, -40px);
+  }
+}
+
+@keyframes float-slower {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-50px, 50px);
+  }
+}
+
+@keyframes float-slowest {
+  0%,
+  100% {
+    transform: translate(-50%, -50%);
+  }
+  50% {
+    transform: translate(calc(-50% + 35px), calc(-50% - 35px));
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes glow-rotate {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.8)) drop-shadow(0 0 10px rgba(236, 72, 153, 0.6)) drop-shadow(0 0 15px rgba(59, 130, 246, 0.4));
+  }
+  33% {
+    filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.8)) drop-shadow(0 0 12px rgba(59, 130, 246, 0.6)) drop-shadow(0 0 18px rgba(168, 85, 247, 0.4));
+  }
+  66% {
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 15px rgba(168, 85, 247, 0.6)) drop-shadow(0 0 20px rgba(236, 72, 153, 0.4));
+  }
+  100% {
+    filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.8)) drop-shadow(0 0 10px rgba(236, 72, 153, 0.6)) drop-shadow(0 0 15px rgba(59, 130, 246, 0.4));
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.jeopardy-logo {
+  color: #1a0a2e;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 5px rgba(168, 85, 247, 0.5), 0 0 10px rgba(236, 72, 153, 0.4), 0 0 15px rgba(59, 130, 246, 0.3), 0 0 20px rgba(168, 85, 247, 0.2);
+  animation: glow-rotate 3s ease-in-out infinite;
+}
+
+.animated-gradient-bg {
+  background: linear-gradient(-45deg, rgba(10, 10, 15, 1) 0%, rgba(30, 15, 50, 0.6) 10%, rgba(50, 20, 80, 0.5) 20%, rgba(20, 30, 70, 0.6) 30%, rgba(40, 15, 60, 0.5) 40%, rgba(59, 30, 100, 0.4) 50%, rgba(40, 20, 75, 0.5) 60%, rgba(25, 35, 80, 0.6) 70%, rgba(45, 15, 65, 0.5) 80%, rgba(30, 20, 55, 0.6) 90%, rgba(10, 10, 15, 1) 100%);
+  background-size: 400% 400%;
+  animation: gradient-shift 30s ease infinite;
+}
