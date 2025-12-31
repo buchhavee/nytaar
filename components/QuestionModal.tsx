@@ -18,6 +18,20 @@ interface QuestionModalProps {
 export default function QuestionModal({ question, pointValue, players, onClose, onAwardPoints }: QuestionModalProps) {
   const [showAnswer, setShowAnswer] = useState(false);
 
+  // Helper: Extract YouTube video ID from URL (supports shorts)
+  function extractYouTubeId(url: string): string | null {
+    // Standard YouTube formats
+    const regExp = /^.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    if (match && match[1].length === 11) return match[1];
+
+    // Shorts format: youtube.com/shorts/VIDEO_ID
+    const shortsMatch = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/);
+    if (shortsMatch && shortsMatch[1]) return shortsMatch[1];
+
+    return null;
+  }
+
   useEffect(() => {
     setShowAnswer(false);
   }, [question]);
@@ -38,7 +52,7 @@ export default function QuestionModal({ question, pointValue, players, onClose, 
         {/* Content */}
         <div className="p-8">
           {/* Media */}
-          {question.mediaUrl && <div className="mb-6 rounded-2xl overflow-hidden bg-black/30">{question.mediaType === "image" || question.mediaType === "gif" ? <img src={question.mediaUrl} alt="Question media" className="w-full max-h-96 object-contain" /> : question.mediaType === "video" ? <video src={question.mediaUrl} controls className="w-full max-h-96" /> : null}</div>}
+          {question.mediaUrl && <div className="mb-6 rounded-2xl overflow-hidden bg-black/30">{question.mediaType === "image" || question.mediaType === "gif" ? <img src={question.mediaUrl} alt="Question media" className="w-full max-h-96 object-contain" /> : question.mediaType === "video" ? extractYouTubeId(question.mediaUrl) ? <iframe width="560" height="315" src={`https://www.youtube.com/embed/${extractYouTubeId(question.mediaUrl)}?autoplay=1&loop=1&playlist=${extractYouTubeId(question.mediaUrl)}`} title="YouTube video" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="w-full max-h-96" /> : <video src={question.mediaUrl} controls autoPlay loop className="w-full max-h-96" /> : null}</div>}
 
           {/* Question Text */}
           <div className="text-white text-3xl md:text-4xl font-semibold text-center mb-8">{question.text}</div>
@@ -60,20 +74,31 @@ export default function QuestionModal({ question, pointValue, players, onClose, 
 
               {/* Award Points to Players */}
               <div className="space-y-3">
-                <div className="text-white text-lg font-semibold mb-3">Giv point til:</div>
+                <div className="text-white text-lg font-semibold mb-3">Giv eller træk point fra:</div>
                 <div className="grid grid-cols-2 gap-3">
                   {players.map((player) => (
-                    <MotionButton
-                      key={player.id}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        onAwardPoints(player.id, pointValue);
-                        onClose();
-                      }}
-                      className="bg-fuchsia-600/15 hover:bg-fuchsia-600/25 backdrop-blur-xl rounded-xl p-4 border border-fuchsia-500/30 text-white font-semibold transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(217,70,239,0.4)]"
-                    >
-                      {player.name} (+{pointValue})
-                    </MotionButton>
+                    <div key={player.id} className="flex gap-2">
+                      <MotionButton
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          onAwardPoints(player.id, pointValue);
+                          onClose();
+                        }}
+                        className="bg-fuchsia-600/15 hover:bg-fuchsia-600/25 backdrop-blur-xl rounded-xl p-4 border border-fuchsia-500/30 text-white font-semibold transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(217,70,239,0.4)]"
+                      >
+                        {player.name} (+{pointValue})
+                      </MotionButton>
+                      <MotionButton
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          onAwardPoints(player.id, -pointValue);
+                          onClose();
+                        }}
+                        className="bg-red-600/15 hover:bg-red-600/25 backdrop-blur-xl rounded-xl p-4 border border-red-500/30 text-white font-semibold transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(239,70,70,0.4)]"
+                      >
+                        {player.name} (-{pointValue})
+                      </MotionButton>
+                    </div>
                   ))}
                 </div>
               </div>
