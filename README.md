@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nytårsjeopardy
 
-## Getting Started
+**Nytårsjeopardy** er et webbaseret quizspil inspireret af klassisk Jeopardy, hvor brugere kan oprette, gemme og afspille deres egne Jeopardy-quizzer – perfekt til f.eks. nytårsaften eller andre festlige lejligheder!
 
-First, run the development server:
+> Live-demo: [https://nytaarsjeopardy.vercel.app](https://nytaarsjeopardy.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## Features
+
+- Opret og administrér dine egne Jeopardy-quizzer
+- Understøttelse af flere kategorier og spørgsmål med point
+- Gem, hent og redigér quizzer via Supabase (gratis open source backend)
+- Kan håndtere spørgsmål med tekst, billeder eller andre medier
+- Moderne Next.js/TypeScript stack
+
+---
+
+## Kom hurtigt i gang
+
+1. **Klon repoet**  
+   ```bash
+   git clone https://github.com/buchhavee/nytaar.git
+   cd nytaar
+   npm install
+   ```
+
+2. **Konfigurer Supabase**
+   - Opret en [Supabase](https://supabase.com) konto og et nyt projekt
+   - Opret de nødvendige tabeller (se nedenfor)
+   - Find din `NEXT_PUBLIC_SUPABASE_URL` og `NEXT_PUBLIC_SUPABASE_ANON_KEY` under "Settings" → "API"
+   - Kopiér `.env.local.example` til `.env.local` og indsæt dine Supabase oplysninger
+
+3. **Start udviklingsserver**
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## Supabase Setup
+
+Projektet bruger Supabase som backend til lagring af quizzes, kategorier og spørgsmål.
+
+### Database struktur
+
+Opret følgende tabeller i Supabase via SQL Editor:
+
+```sql
+-- quizzes
+CREATE TABLE quizzes (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title text NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- categories
+CREATE TABLE categories (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  quiz_id uuid REFERENCES quizzes(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  "order" int NOT NULL
+);
+
+-- questions
+CREATE TABLE questions (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  category_id uuid REFERENCES categories(id) ON DELETE CASCADE,
+  text text NOT NULL,
+  answer text NOT NULL,
+  points int NOT NULL,
+  media_type text,
+  media_url text,
+  "order" int NOT NULL
+);
 ```
+**Indsæt derefter dine Supabase API credentials i `.env.local`.**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Se evt. detaljer og troubleshooting i [`SUPABASE_SETUP.md`](SUPABASE_SETUP.md).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Projektstruktur
 
-## Learn More
+- `app/` & `components/` – Next.js applikation og UI-komponenter
+- `lib/` – Diverse hjælpefunktioner og API-klienter, herunder Supabase-integration
+- `types/` – TypeScript typer til quiz-data
+- `public/` – Statisk indhold (fx billeder)
+- `SUPABASE_SETUP.md` – Komplet trin-for-trin guide til Supabase opsætning
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Teknologier
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Next.js](https://nextjs.org/) & [React](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Supabase](https://supabase.com/)
+- [Vercel](https://vercel.com/) (deploy-platform)
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Licens
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Dette projekt har ingen eksplicit licens. Kontakt forfatteren for detaljer.
+
+---
+
+## Tak
+
+Tak for at bruge Nytårsjeopardy! For spørgsmål, fejl eller ønsker, lav gerne en issue eller PR.
